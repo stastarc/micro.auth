@@ -1,9 +1,8 @@
-import os
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
 
-from env import MiddlewareEnv
+from env.env import MiddlewareEnv
 
 def black_response() -> Response:
     return Response(content='fuck you', status_code=410)

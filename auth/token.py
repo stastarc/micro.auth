@@ -1,5 +1,4 @@
 from dataclasses import asdict, dataclass
-from distutils import bcppcompiler
 import random
 import jwt
 

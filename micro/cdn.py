@@ -2,9 +2,6 @@ from env import MicroEnv
 import requests
 
 def upload_file(file, title: str, detail: str, level: int = 0) -> str:
-    """
-    Uploads a file to the CDN
-    """
     res = requests.post(
         f'http://{MicroEnv.CDN}/internal/cdn/upload',
         files={

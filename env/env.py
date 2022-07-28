@@ -1,9 +1,16 @@
+import os
 import dotenv
 
-ENV = dotenv.dotenv_values('.env')
-MIDDLEWARE = dotenv.dotenv_values('.middleware.env')
-DB = dotenv.dotenv_values('.database.env')
-MICRO = dotenv.dotenv_values('.micro.env')
+DIR = os.path.dirname(os.path.realpath(__file__))
+
+def p(name: str) -> str:
+    return os.path.join(DIR, name)
+
+
+ENV = dotenv.dotenv_values(p('.env'))
+MIDDLEWARE = dotenv.dotenv_values(p('.middleware.env'))
+DB = dotenv.dotenv_values(p('.database.env'))
+MICRO = dotenv.dotenv_values(p('.micro.env'))
 
 class MiddlewareEnv:
     MAX_CONTENT_SIZE = int(MIDDLEWARE.get('MAX_CONTENT_SIZE', None) or 3145728)
