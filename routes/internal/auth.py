@@ -9,7 +9,7 @@ class ValidBody(BaseModel):
     success: bool
     payload: TokenPayload | str
 
-@router.post('/valid')
+@router.get('/valid')
 async def valid(
     key: str,
     check_active: bool=True
