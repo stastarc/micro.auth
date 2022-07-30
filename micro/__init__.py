@@ -1,1 +1,1 @@
-from . import cdn
+from .cdn import CDN

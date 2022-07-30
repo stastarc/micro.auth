@@ -1,11 +1,10 @@
 # 없애면 안돼ㅑ요~
-from .db import engine, factory, scope
+from .db import engine, factory, scope, Base
 import random
 import string
 
 from sqlalchemy import Column, DateTime, text, exists
 from sqlalchemy.dialects.mysql import BIGINT, ENUM, VARCHAR
-from .db import Base
 from utils import nickname as nickname_util
 
 class User(Base):

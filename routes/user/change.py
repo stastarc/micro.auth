@@ -2,7 +2,7 @@ from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import Response
 from auth import Token
 from database import users
-import micro
+from micro.cdn import CDN
 from utils import nickname as nickname_util
 import numpy as np
 import cv2
@@ -73,7 +73,7 @@ async def change_picture(
         return {"error": "The wrong picture or size is not 128x128."}
 
     try:
-        picture_id = micro.cdn.upload_file(img, f'user picture {payload.id}', 'client upload')
+        picture_id = CDN.upload_file(img, f'user picture {payload.id}', 'client upload')
     except:
         res.status_code = 500
         return {"error": "cdn error"}
