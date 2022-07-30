@@ -16,18 +16,18 @@ async def info(
         res.status_code = 400
         return None
 
-    succ, payload = Token.auth(key, check_active=False)
-
-    if not succ or isinstance(payload, str):
-        res.status_code = 401
-        return {"error": payload}
-
-    me = user_id == 0 or payload.id == user_id
-
-    if me:
-        user_id = payload.id
-
     with users.scope() as sess:
+        succ, payload = Token.session_auth(sess, key, check_active=False)
+
+        if not succ or isinstance(payload, str):
+            res.status_code = 401
+            return {"error": payload}
+
+        me = user_id == 0 or payload.id == user_id
+
+        if me:
+            user_id = payload.id
+
         user = sess.query(users.User).filter(users.User.id == user_id).first()
 
         if not user or (not me and user.status != 'active'):
@@ -49,5 +49,3 @@ async def info(
         return {
             'profile': profile
         }
-
-        

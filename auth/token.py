@@ -34,13 +34,17 @@ class Token:
 
     @staticmethod
     def auth(token: str, check_active: bool = True) -> tuple[bool, str | TokenPayload]:
+        with users.scope() as sess:
+            return Token.session_auth(sess, token, check_active)
+    
+    @staticmethod
+    def session_auth(sess, token: str, check_active: bool = True) -> tuple[bool, str | TokenPayload]:
         try: payload = Token.decode(token, '', verify_sign=False)
         except: return False, "Invalid token"
 
-        with users.scope() as sess:
-            status = sess.query(users.User.status).filter(users.User.id == payload.id).scalar()
+        status = sess.query(users.User.status).filter(users.User.id == payload.id).scalar()
 
-            if not status or (check_active and status != 'active'):
-                return False, "The user cannot be found or disabled."
+        if not status or (check_active and status != 'active'):
+            return False, "The user cannot be found or disabled."
             
         return True, payload

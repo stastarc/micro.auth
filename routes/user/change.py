@@ -19,13 +19,13 @@ async def change_nickname(
         res.status_code = 400
         return {"error": "Invalid nickname"}
 
-    succ, payload = Token.auth(key)
-
-    if not succ or isinstance(payload, str):
-        res.status_code = 401
-        return {"error": payload}
-
     with users.scope() as sess:
+        succ, payload = Token.session_auth(sess, key)
+
+        if not succ or isinstance(payload, str):
+            res.status_code = 401
+            return {"error": payload}
+
         if users.User.exists_nickname(sess, nickname):
             res.status_code = 400
             return {"error": "Nickname already exists"}
