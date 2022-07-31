@@ -5,18 +5,18 @@ from auth.token import Token, TokenPayload
 
 router = APIRouter(prefix='/auth')
 
-class ValidBody(BaseModel):
+class VerifyBody(BaseModel):
     success: bool
     payload: TokenPayload | str
 
-@router.get('/valid')
-async def valid(
-    key: str,
+@router.get('/verify')
+async def verify(
+    token: str,
     check_active: bool=True
 ):
-    succ, payload = Token.auth(key, check_active=check_active)
+    succ, payload = Token.auth(token, check_active=check_active)
 
-    return ValidBody(
+    return VerifyBody(
         success=succ, 
         payload=payload
     )

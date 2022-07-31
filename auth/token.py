@@ -39,12 +39,22 @@ class Token:
     
     @staticmethod
     def session_auth(sess, token: str, check_active: bool = True) -> tuple[bool, str | TokenPayload]:
-        try: payload = Token.decode(token, '', verify_sign=False)
-        except: return False, "Invalid token"
+        def verify(secret: str, verify_sign: bool):
+            try: return Token.decode(token, secret if verify_sign else '', verify_sign=verify_sign)
+            except: return False
+        
+        payload = verify('', False)
 
-        status = sess.query(users.User.status).filter(users.User.id == payload.id).scalar()
+        if not payload:
+            return False, "Invalid token"
 
-        if not status or (check_active and status != 'active'):
+        user = sess.query(users.User).filter(users.User.id == payload.id).scalar()
+        payload = verify(user.secret, True)
+        status = user.status
+
+        if not payload:
+            return False, "Invalid token"
+        elif not status or (check_active and status != 'active'):
             return False, "The user cannot be found or disabled."
             
         return True, payload
