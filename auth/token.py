@@ -13,7 +13,7 @@ class Token:
     @staticmethod
     def encode(payload: TokenPayload, secret: str) -> str:
         data = asdict(payload)
-        data['exp'] = f'empty! wow {random.randint(10000, 99999)}'
+        data['$'] = f'{random.randint(0, 9999999)}'
         return jwt.encode(data, secret, algorithm='HS256')
 
     @staticmethod
@@ -28,7 +28,7 @@ class Token:
             }
         )
 
-        del payload['exp']
+        del payload['$']
 
         return TokenPayload(**payload)
 
@@ -39,22 +39,21 @@ class Token:
     
     @staticmethod
     def session_auth(sess, token: str, check_active: bool = True) -> tuple[bool, str | TokenPayload]:
-        def verify(secret: str, verify_sign: bool):
-            try: return Token.decode(token, secret if verify_sign else '', verify_sign=verify_sign)
+        def verify(secret: str):
+            try: return Token.decode(token, secret, verify_sign=bool(secret))
             except: return False
         
-        payload = verify('', False)
+        payload = verify('')
 
         if not payload:
             return False, "Invalid token"
 
         user = sess.query(users.User).filter(users.User.id == payload.id).scalar()
-        payload = verify(user.secret, True)
-        status = user.status
+        payload = verify(str(user.secret))
 
         if not payload:
             return False, "Invalid token"
-        elif not status or (check_active and status != 'active'):
+        elif check_active and user.status != 'active':
             return False, "The user cannot be found or disabled."
             
         return True, payload
