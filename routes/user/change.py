@@ -73,7 +73,7 @@ async def change_picture(
         return {"error": "The wrong picture or size is not 128x128."}
 
     try:
-        picture_id = CDN.upload_file(img, f'user picture {payload.id}', 'client upload')
+        picture_id = CDN.upload_file(img, f'user picture user:{payload.id}', 'image/jpeg')
     except:
         res.status_code = 500
         return {"error": "cdn error"}
