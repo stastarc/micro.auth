@@ -10,14 +10,14 @@ router = APIRouter(prefix='/info')
 async def info(
         res: Response,
         user_id: int,
-        key: str,
+        token: str,
     ):
     if user_id < 0:
         res.status_code = 400
         return None
 
     with users.scope() as sess:
-        succ, payload = Token.session_auth(sess, key, check_active=False)
+        succ, payload = Token.session_auth(sess, token, check_active=False)
 
         if not succ or isinstance(payload, str):
             res.status_code = 401

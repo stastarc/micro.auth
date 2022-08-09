@@ -40,6 +40,9 @@ async def login(body: LoginBody, res: Response):
 
             sess.add(user)
 
+        sess.flush()
+        sess.refresh(user)
+        
         user_id = user.id
         secret = str(user.secret)
         
