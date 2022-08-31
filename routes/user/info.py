@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from fastapi.responses import Response
-from database import users
+from database import User, scope
 from auth import Token
 
 
@@ -16,7 +16,7 @@ async def info(
         res.status_code = 400
         return None
 
-    with users.scope() as sess:
+    with scope() as sess:
         succ, payload = Token.session_auth(sess, token, check_active=False)
 
         if not succ or isinstance(payload, str):
@@ -28,7 +28,7 @@ async def info(
         if me:
             user_id = payload.id
 
-        user = sess.query(users.User).filter(users.User.id == user_id).first()
+        user = sess.query(User).filter(User.id == user_id).first()
 
         if not user or (not me and user.status != 'active'):
             res.status_code = 404

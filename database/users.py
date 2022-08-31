@@ -1,5 +1,5 @@
-# 없애면 안돼ㅑ요~
-from .db import engine, factory, scope, Base
+from __future__ import annotations
+from .db import Base
 import random
 import string
 
@@ -31,3 +31,7 @@ class User(Base):
 
             if not User.exists_nickname(sess, nickname):
                 return nickname
+
+    @staticmethod
+    def session_get(sess, id: int) -> User | None:
+        return sess.query(User).filter(User.id == id).first()

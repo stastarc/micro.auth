@@ -1,2 +1,3 @@
 from .db import engine, factory, scope
-from . import users
+from .users import User
+from .feedback import Feedback

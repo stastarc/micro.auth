@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from fastapi.responses import Response
-from database import users
+from database import scope, User
 
 router = APIRouter(prefix='/info')
 
@@ -11,8 +11,8 @@ async def info(
     if user_id < 0:
         return Response(status_code=400)
 
-    with users.scope() as sess:
-        user: users.User = sess.query(users.User).filter(users.User.id == user_id).first()  # type: ignore
+    with scope() as sess:
+        user: User = sess.query(User).filter(User.id == user_id).first()  # type: ignore
 
         if user is None:
             return Response(status_code=404)
@@ -32,8 +32,8 @@ async def info_detail(
     if user_id < 0:
         return Response(status_code=400)
 
-    with users.scope() as sess:
-        user: users.User = sess.query(users.User).filter(users.User.id == user_id).first()  # type: ignore
+    with scope() as sess:
+        user: User = sess.query(User).filter(User.id == user_id).first()  # type: ignore
         
         if user is None:
             return Response(status_code=404)

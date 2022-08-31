@@ -3,7 +3,7 @@ from fastapi.responses import Response
 from pydantic import BaseModel
 from auth.token import TokenPayload
 
-from database import users
+from database import scope, User
 from auth import social, Token
 
 
@@ -27,12 +27,12 @@ async def login(body: LoginBody, res: Response):
         res.status_code = 400
         return {"error": f"Authentication failed: {data}"}
 
-    with users.scope() as sess:
-        user = sess.query(users.User).filter(users.User.social_id == data.id).first()
+    with scope() as sess:
+        user = sess.query(User).filter(User.social_id == data.id).first()
 
         if not user:
-            user = users.User(
-                nickname=users.User.create_nickname(sess),
+            user = User(
+                nickname=User.create_nickname(sess),
                 email=data.email,
                 social_id=data.id,
                 social_type=method.type

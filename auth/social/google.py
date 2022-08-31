@@ -16,16 +16,11 @@ class GoogleSocialAuth(SocialAuth):
 
         profile = profile.json()
 
-        if not 'Google_account' in profile:
+        if not 'sub' in profile:
             return False, "Required permission(s) not granted"
         
-        data = profile['Google_account'].get('profile', None)
-
-        if data is None:
-            return False, "Cannot get social profile"
-        
         return True, SocialAuthResponse(
-            id=data['id'],
-            nickname=data.get('nickname', None),
-            email=profile['Google_account'].get('email', None)
+            id=profile['sub'],
+            nickname=None,
+            email=profile.get('email', None) if profile.get('email_verified', False) else None,
         )

@@ -2,7 +2,7 @@ from dataclasses import asdict, dataclass
 import random
 import jwt
 
-from database import users
+from database import scope, User
 
 
 @dataclass
@@ -34,7 +34,7 @@ class Token:
 
     @staticmethod
     def auth(token: str, check_active: bool = True) -> tuple[bool, str | TokenPayload]:
-        with users.scope() as sess:
+        with scope() as sess:
             return Token.session_auth(sess, token, check_active)
     
     @staticmethod
@@ -48,7 +48,7 @@ class Token:
         if not payload:
             return False, "Invalid token"
 
-        user = sess.query(users.User).filter(users.User.id == payload.id).scalar()
+        user = sess.query(User).filter(User.id == payload.id).scalar()
         payload = verify(str(user.secret))
 
         if not payload:
