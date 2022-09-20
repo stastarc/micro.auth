@@ -27,13 +27,11 @@ class KakaoSocialAuth(SocialAuth):
         if not 'kakao_account' in profile:
             return False, "Required permission(s) not granted"
         
-        data = profile['kakao_account'].get('profile', None)
-
-        if data is None:
-            return False, "Cannot get social profile"
+        account = profile.get('kakao_account', None)
+        data = account.get('profile', None) if account else None
         
         return True, SocialAuthResponse(
             id=profile['id'],
-            nickname=data.get('nickname', None),
-            email=profile['kakao_account'].get('email', None)
+            nickname=data.get('nickname', None) if data else None,
+            email=account.get('email', None)
         )

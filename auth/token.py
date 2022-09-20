@@ -49,6 +49,10 @@ class Token:
             return False, "Invalid token"
 
         user = sess.query(User).filter(User.id == payload.id).scalar()
+
+        if not payload:
+            return False, "User not found"
+
         payload = verify(str(user.secret))
 
         if not payload:
